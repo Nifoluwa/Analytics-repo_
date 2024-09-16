@@ -60,8 +60,9 @@ app.layout = dbc.Container([
             ),
         dbc.Col([html.Div(
             [html.H6(
-                children="Total Revenue"
-            )
+                children="Total Revenues",
+                id="title"
+            ), dbc.CardBody(html.H2(f"{round(locations_totals['sales'].sum(), 3)}$", id="title"))
 
             ]
         ),])
@@ -139,3 +140,4 @@ def restaurant_product_revenue(btn_selected):
 
 if __name__ == '__main__':
     app.run(debug=True, port=7000)
+print(locations_totals["sales"].sum())

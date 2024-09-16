@@ -5,6 +5,7 @@
  color: brown;
 }
 
-background{
-background-image:url("../static/images/intro_photo_two");
+element{
+background-image: url("../static/images/intro_photo_two.jpeg");
+background-size: cover;
 }
