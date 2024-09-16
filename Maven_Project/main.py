@@ -2,6 +2,7 @@ from dash import Dash, html,callback, dcc, Output, Input
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
 df = pd.read_csv("monthly_sales.csv")
 cd = pd.read_csv("cleaned_data.csv")
 locations = list(cd.store_location.unique())
@@ -51,15 +52,19 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(
             html.H1("Maven Roasters Analytics Report for January to June 20xx", className="text-center text-primary, mb-4"),
-            width=12
+            width=12, id="title"
         )
     ]),
     dbc.Row([
         dbc.Col(card_intro, width=4,
             ),
-        dbc.Col(
-            card_summary, width=4
-        )
+        dbc.Col([html.Div(
+            [html.H6(
+                children="Total Revenue"
+            )
+
+            ]
+        ),])
     ]
     ),
     dbc.Row([
@@ -133,4 +138,4 @@ def restaurant_product_revenue(btn_selected):
      return figure, btn_selected
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=7000)

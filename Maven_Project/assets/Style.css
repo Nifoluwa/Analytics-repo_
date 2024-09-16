@@ -1,0 +1,10 @@
+#title {
+ text-align: center;
+ font-family: cursive;
+ font-size: 20px;
+ color: brown;
+}
+
+background{
+background-image:url("../static/images/intro_photo_two");
+}
