@@ -4,8 +4,11 @@
  font-size: 20px;
  color: brown;
 }
-
-element{
-background-image: url("../static/images/intro_photo_two.jpeg");
-background-size: cover;
+.alt_headers{
+text-align: center;
 }
+/* body{
+background-image: url("../static/images/intro_photo_two.jpeg");
+
+}
+/* background-size: cover;

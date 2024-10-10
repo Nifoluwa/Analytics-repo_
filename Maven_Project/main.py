@@ -28,10 +28,10 @@ fig_sales = px.histogram(
 fig_sales.update_traces(showlegend=False, hovertemplate="<br>".join(([
         "Revenue: %{x:$, .2f}"
 ])))
-card_intro = dbc.Card([
-    dbc.CardImg(src="/static/images/intro_photo_one.jpeg", top=True),
-]
-)
+# card_intro = dbc.Card([
+#     dbc.CardImg(src="/static/images/intro_photo_one.jpeg", top=True),
+# ]
+# )
 card_sales_fig = dbc.Card(
     dbc.CardImg(src='static/images/MR.png', top=True)
 )
@@ -56,16 +56,13 @@ app.layout = dbc.Container([
         )
     ]),
     dbc.Row([
-        dbc.Col(card_intro, width=4,
-            ),
-        dbc.Col([html.Div(
-            [html.H6(
-                children="Total Revenues",
-                id="title"
-            ), dbc.CardBody(html.H2(f"{round(locations_totals['sales'].sum(), 3)}$", id="title"))
-
-            ]
-        ),])
+        html.Div([html.Img(src="/static/images/intro_photo_one.jpeg",
+                           style={
+                               "height": "80px",
+                               "width": "auto",
+                               "margin-bottom": "30px",
+                           },
+            )]),
     ]
     ),
     dbc.Row([
