@@ -28,16 +28,12 @@ fig_sales = px.histogram(
 fig_sales.update_traces(showlegend=False, hovertemplate="<br>".join(([
         "Revenue: %{x:$, .2f}"
 ])))
-# card_intro = dbc.Card([
-#     dbc.CardImg(src="/static/images/intro_photo_one.jpeg", top=True),
-# ]
-# )
-card_sales_fig = dbc.Card(
+card_sales_fig = dbc.Card([
     dbc.CardImg(src='static/images/MR.png', top=True)
-)
-card_sales_prop = dbc.Card(
+])
+card_sales_prop = dbc.Card([
     dbc.CardImg(src='static/images/plot_2.png', top=True)
-)
+])
 card_summary = dbc.Card([
     dbc.CardBody(
         [html.H2("Introduction")
@@ -51,40 +47,24 @@ card_summary = dbc.Card([
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(
-            html.H1("Maven Roasters Analytics Report for January to June 20xx", className="text-center text-primary, mb-4"),
-            width=12, id="title"
+            html.H1("Maven Roasters Analytics Report for January to June 20xx", className="text-center"),
+            width=6, id="title"
         )
     ]),
     dbc.Row([
-        html.Div([html.Img(src="/static/images/intro_photo_one.jpeg",
-                           style={
-                               "height": "80px",
-                               "width": "auto",
-                               "margin-bottom": "30px",
-                           },
-            )]),
-    ]
-    ),
-    dbc.Row([
-        dbc.Col(card_sales_fig, width=6),
-        dbc.Col(card_sales_prop, width=6)
+        dbc.Col(dbc.Card([card_sales_fig])),
+        dbc.Col(dbc.Card([card_sales_prop]))
     ]),
     dbc.Row(
-        [   dbc.Col(dbc.Card(
-                dbc.CardBody([
-                    html.Div(
-                        children='Monthly Sales by store.', id="store_name"),
+        [dbc.Col([
                     dcc.Dropdown(options=locations, id="loc_selection", value="Astoria"),
-                    dcc.Graph(id="Rev_per_store(Month)", hoverData={})
-                ], )
-            ), width={"size":6}),
-            dbc.Col(dbc.Card(
-                dbc.CardBody([
-            html.Div(children="Revenue by product(store)", id="store_location"),
-            dcc.Dropdown(options=locations, id="location_selection", value="Astoria"),
-            dcc.Graph(id="Rev_by_product(store)", hoverData={})
-                ])
-            ), width={"size":5}),
+                    html.Div(children='Monthly Sales by store.', id="store_name"),
+                    dcc.Graph(id="Rev_per_store(Month)", hoverData={}
+                )], width={'size':5}),
+        dbc.Col([
+                    html.Div(children="Revenue by product(store)", id="store_location"),
+                    dcc.Dropdown(options=locations, id="location_selection", value="Astoria"),
+                    dcc.Graph(id="Rev_by_product(store)", hoverData={})], width={'size':5}),
 
         ],
 
@@ -136,5 +116,4 @@ def restaurant_product_revenue(btn_selected):
      return figure, btn_selected
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7000)
-print(locations_totals["sales"].sum())
+    app.run(debug=True, port=8000)
