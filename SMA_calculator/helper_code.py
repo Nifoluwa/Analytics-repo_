@@ -2,15 +2,15 @@ import json
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+
 class MovingAverageCalculator:
     '''Code base for a moving average calculator. Computes moving averages on a time series
-    stock price dataset '''
-
+    stock price dataset
+    Parameters:
+    -------------
+    prices: str-> The relevant filename containing the preprocessed time series data.'''
 
     def __init__(self, prices):
-        ''' Parameters:
-        -------------
-        prices: str-> The relevant filename containing the preprocessed time series data.'''
         self.prices = prices
         self.__sma = []
 
@@ -18,17 +18,20 @@ class MovingAverageCalculator:
     def sma(self):
         return self.__sma
 
-    def moving_averages(self, window: int) -> dict:
-        ''' Parameters:
+    def moving_averages(self, window: int, type: str) -> dict:
+        '''
+        Returns DataFrame of given dataset and the moving averages as specified.
+        Parameters:
         -----------------
         window: int -> Moving average window
-        return: Dictionary
-        keys: values
-        Data: DataFrame of formatted TS data and moving average values|
-        Buy_values: Bull values
-        Buy_dates: Bull dates
+        type: str -> One of "high", "low", "open" or "close" prices
+        :return: Dictionary:
+        keys : values
+        Data : DataFrame of formatted TS data and moving average values
+        Buy_values : Bull values
+        Buy_dates : Bull dates
         Sell_values: Bear values
-        Sell_dates: Sell dates
+        Sell_dates : Sell dates
 
         '''
         buy_dates = []
@@ -37,18 +40,18 @@ class MovingAverageCalculator:
         sell_values = []
         results = {}
         for i in range(len(self.prices) - window + 1):
-            avg = np.mean(self.prices[i:i + window])
+            avg = np.mean(self.prices[type][i:i + window])
             self.__sma.append(avg)
-        self.prices = self.prices[window - 1:]
+        self.prices = self.prices.iloc[window - 1:]
         for i in range(1, len(self.prices)):
-            if self.prices.iloc[i - 1][0] < self.__sma[i - 1] and self.prices.iloc[i][0] > self.__sma[i]:
+            if self.prices[type].iloc[i - 1] < self.__sma[i - 1] and self.prices[type].iloc[i] > self.__sma[i]:
                 buy_dates.append(self.prices.index[i])
-                buy_values.append(self.prices.iloc[i][0])
-            elif self.prices.iloc[i - 1][0] > self.__sma[i - 1] and self.prices.iloc[i][0] < self.__sma[i]:
+                buy_values.append(self.prices[type].iloc[i])
+            elif self.prices[type].iloc[i - 1] > self.__sma[i - 1] and self.prices[type].iloc[i] < self.__sma[i]:
                 sell_dates.append(self.prices.index[i])
-                sell_values.append(self.prices.iloc[i][0])
+                sell_values.append(self.prices[type].iloc[i])
 
-        self.prices[f"MA{window}"] = self.__sma
+        self.prices[f"{type} MA {window}"] = self.__sma
         results["Data"] = self.prices
         results["Buy_values"] = buy_values
         results["Buy_dates"] = pd.to_datetime(buy_dates)
@@ -59,16 +62,16 @@ class MovingAverageCalculator:
 
 
 def wrangle(filename:str, key:str, train_size:float= 0.8,*args) -> dict:
-    '''Written strictly to deal with JSON data extracted using AlphaVantage APIs.
+    '''Written strictly to deal with data extracted using AlphaVantage API's.
     Not for general use. Designed to deal with stock price data and present it in a usable(DataFrame)
-    format.
-    :Parameters:
+    condition.
+    Parameters:
     --------------------
-            filename(str): -> JSON file.
-            train_size(float): -> The size of data kept for training
-            key(str): The relevant key header in the file
+            filename: str -> The file in question. Must be json.
+            train_size: float(optional) -> The size of data kept for training
+            key: str: The relevant key header in the file
 
-    :Returns-> dictionary of training data(closing stock prices) and test data
+    Returns-> dictionary of training data(closing stock prices) and test data
 
             '''
     with open(filename) as f:
@@ -76,6 +79,7 @@ def wrangle(filename:str, key:str, train_size:float= 0.8,*args) -> dict:
 
     # Identifying relevant keys and values for extraction
     # Conversion of data to a DataFrame and transposition to allow for easier manipulation
+    # df_comp = pd.DataFrame(data["Time Series (Daily)"]).T
     df_comp = pd.DataFrame(data[key]).T
     # Conversion of 'Object' types to float
     for i in df_comp.columns:
@@ -83,7 +87,7 @@ def wrangle(filename:str, key:str, train_size:float= 0.8,*args) -> dict:
     df_comp = df_comp[::-1]
 
     df_comp.rename(
-        columns={"4. close": "mkt_price", "1. open": "open", "2. high": "high", "3. low": "low", "5. volume": "volume"},
+        columns={"4. close": "close", "1. open": "open", "2. high": "high", "3. low": "low", "5. volume": "volume"},
         inplace=True)
     df = df_comp.copy()
     df["dates"] = df.index
@@ -101,7 +105,7 @@ def wrangle(filename:str, key:str, train_size:float= 0.8,*args) -> dict:
 
     df_ = df_comp.copy()
 
-    del df["open"], df["high"], df["low"], df["volume"]
+    #del df["open"], df["high"], df["low"], df["volume"]
 
     size = int(train_size * len(df))
     df_train = df.iloc[:size]
@@ -110,3 +114,6 @@ def wrangle(filename:str, key:str, train_size:float= 0.8,*args) -> dict:
     frames = {"train": df_train, "test": df_test, "copy": df_}
 
     return frames
+
+
+
